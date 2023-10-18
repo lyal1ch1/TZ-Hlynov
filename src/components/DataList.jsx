@@ -3,7 +3,7 @@ import React from "react";
 const DataList = ({ dataList, addItemToLsit }) => {
   return (
     <div>
-      <h1>Список данных</h1>
+      <h1>Список пиц</h1>
       <ul>
         {dataList.map((item, index) => (
           <li key={index}>

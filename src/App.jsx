@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import useStickyState from "./useStickyState";
 import DataList from "./components/DataList";
 import SelectedDataList from "./components/SelectedDataList";
+import Categories from "./components/Categoreis";
 
 const App = () => {
   const [dataList, setDataLists] = useState([]);
@@ -9,11 +10,17 @@ const App = () => {
     [],
     "selectedData"
   );
+  const [categoryId, setCategoryId] = useState(0);
 
+  // React.useEffect(() => {
+
+  // },)
   const fetchData = async () => {
     try {
       const response = await fetch(
-        "https://64bbd2587b33a35a4446b57a.mockapi.io/Pizzas"
+        `https://64bbd2587b33a35a4446b57a.mockapi.io/Pizzas?${
+          categoryId > 0 ? `category=${categoryId}` : ``
+        }`
       );
       if (response.ok) {
         const result = await response.json();
@@ -26,7 +33,7 @@ const App = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [categoryId]);
 
   const addItemToLsit = (selectedItem) => {
     const index = selectedDataList.findIndex(
@@ -53,13 +60,19 @@ const App = () => {
   };
 
   return (
-    <div className="item-list">
-      <DataList dataList={dataList} addItemToLsit={addItemToLsit} />
-      <SelectedDataList
-        selectedDataList={selectedDataList}
-        removeItemFromList={removeItemFromList}
+    <>
+      <Categories
+        value={categoryId}
+        onClickCategory={(i) => setCategoryId(i)}
       />
-    </div>
+      <div className="item-list">
+        <DataList dataList={dataList} addItemToLsit={addItemToLsit} />
+        <SelectedDataList
+          selectedDataList={selectedDataList}
+          removeItemFromList={removeItemFromList}
+        />
+      </div>
+    </>
   );
 };
 

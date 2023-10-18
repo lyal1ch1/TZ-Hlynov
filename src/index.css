@@ -4,6 +4,16 @@
   box-sizing: border-box;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
+.categories ul {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  margin-top: 32px;
+  list-style: none;
+}
+.active {
+  font-weight: 800;
+}
 .item-list {
   display: flex;
   justify-content: center;

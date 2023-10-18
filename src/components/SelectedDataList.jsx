@@ -3,7 +3,7 @@ import React from "react";
 const SelectedDataList = ({ selectedDataList, removeItemFromList }) => {
   return (
     <div>
-      <h1>Выбранные данные</h1>
+      <h1>Выбранные пиццы</h1>
       <ul>
         {selectedDataList.map((item, index) => (
           <li key={index}>
