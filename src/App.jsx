@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
+import useStickyState from "./useStickyState";
+import DataList from "./components/DataList";
+import SelectedDataList from "./components/SelectedDataList";
 
 const App = () => {
   const [dataList, setDataLists] = useState([]);
-  const [selectedDataList, setSelectedDataList] = useState([]);
+  const [selectedDataList, setSelectedDataList] = useStickyState(
+    [],
+    "selectedData"
+  );
 
   const fetchData = async () => {
     try {
@@ -20,60 +26,39 @@ const App = () => {
 
   useEffect(() => {
     fetchData();
-    loadSelectedDataFromLocalStorage();
   }, []);
 
-  const loadSelectedDataFromLocalStorage = () => {
-    const savedDataList = localStorage.getItem("selectedData");
-    if (savedDataList) {
-      setSelectedDataList(JSON.parse(savedDataList));
-    }
-  };
-
-  const saveSelectedDataToLocalStorage = () => {
-    if (selectedDataList.length > 0) {
-      localStorage.setItem("selectedData", JSON.stringify(selectedDataList));
-    }
-  };
-
-  useEffect(() => {
-    saveSelectedDataToLocalStorage();
-  }, [selectedDataList]);
-
   const addItemToLsit = (selectedItem) => {
-    setSelectedDataList([...selectedDataList, selectedItem]);
+    const index = selectedDataList.findIndex(
+      (item) => item.id === selectedItem.id
+    );
+
+    if (index === -1) {
+      setSelectedDataList([...selectedDataList, { ...selectedItem, count: 1 }]);
+    } else {
+      const newDataList = [...selectedDataList];
+      newDataList[index].count++;
+      setSelectedDataList(newDataList);
+    }
   };
 
   const removeItemFromList = (index) => {
-    const newData = [...selectedDataList];
-    newData.splice(index, 1);
-    setSelectedDataList(newData);
+    const newDataList = [...selectedDataList];
+    if (newDataList[index].count !== 1) {
+      newDataList[index].count--;
+    } else {
+      newDataList.splice(index, 1);
+    }
+    setSelectedDataList(newDataList);
   };
 
   return (
     <div className="item-list">
-      <div>
-        <h1>Список данных</h1>
-        <ul>
-          {dataList.map((item, index) => (
-            <li key={index}>
-              🍕 {item.title}
-              <button onClick={() => addItemToLsit(item)}>Выбрать</button>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div>
-        <h1>Выбранные данные</h1>
-        <ul>
-          {selectedDataList.map((item, index) => (
-            <li key={index}>
-              😋 {item.title}
-              <button onClick={() => removeItemFromList(index)}>Удалить</button>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <DataList dataList={dataList} addItemToLsit={addItemToLsit} />
+      <SelectedDataList
+        selectedDataList={selectedDataList}
+        removeItemFromList={removeItemFromList}
+      />
     </div>
   );
 };
